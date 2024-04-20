@@ -1,0 +1,8 @@
+**/node_modules
+**/.idea
+**/dist
+**/config.json
+**/*.test.ts
+**/.vscode
+**/.temp
+**/.cache
