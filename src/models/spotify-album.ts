@@ -15,7 +15,8 @@ export default class SpotifyAlbum {
   public static async fromUrl(
     url: string,
     offset?: number,
-    limit?: number
+    limit?: number,
+    fetchTracks: boolean = false
   ): Promise<SearchResultMetadata> {
     const rawRequestLimit = (limit ? Math.min(limit, 50) : limit) as
       | MaxInt<50>
@@ -31,34 +32,33 @@ export default class SpotifyAlbum {
       ),
     ]);
 
+    const rawAlbumTracksItems = rawAlbumTracks.items.filter(
+      (rawTrackMeta) => rawTrackMeta && !rawTrackMeta.is_local
+    );
     const songs: Song[] = [];
 
-    for (const rawSimpliedTrackMeta of rawAlbumTracks.items) {
-      if (!rawSimpliedTrackMeta || rawSimpliedTrackMeta.is_local) {
-        continue;
-      }
+    if (fetchTracks) {
+      await Promise.all(
+        rawAlbumTracksItems.map(async (rawTrackMeta) => {
+          const newRawTrackMeta = await Spotify.getTrack(rawTrackMeta.id);
 
-      songs.push(
-        SpotifySong.songFromSimplifiedTrackMeta(rawSimpliedTrackMeta, {
-          album: rawAlbumMeta.name,
-          image: Formatter.getMaxImageUrl(rawAlbumMeta.images)!,
+          songs.push(
+            SpotifySong.songFromTrackMeta(newRawTrackMeta, {
+              album: rawAlbumMeta.name,
+            })
+          );
         })
       );
+    } else {
+      for (const rawSimpliedTrackMeta of rawAlbumTracksItems) {
+        songs.push(
+          SpotifySong.songFromSimplifiedTrackMeta(rawSimpliedTrackMeta, {
+            album: rawAlbumMeta.name,
+            image: Formatter.getMaxImageUrl(rawAlbumMeta.images)!,
+          })
+        );
+      }
     }
-
-    // await Promise.all(
-    //   rawAlbumTracks.items
-    //     .filter((rawTrackMeta) => rawTrackMeta && !rawTrackMeta.is_local)
-    //     .map(async (rawTrackMeta) => {
-    //       const newRawTrackMeta = await Spotify.getTrack(rawTrackMeta.id);
-
-    //       songs.push(
-    //         SpotifySong.songFromTrackMeta(newRawTrackMeta, {
-    //           album: rawAlbumMeta.name,
-    //         })
-    //       );
-    //     })
-    // );
 
     const rawNextAlbumId = Spotify.getIdFromUrl(rawAlbumTracks.next);
     const rawNextAlbumOffset = rawAlbumTracks.next
