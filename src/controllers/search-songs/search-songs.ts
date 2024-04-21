@@ -16,8 +16,12 @@ export class GetSearchSongsController implements IController {
     try {
       const requiredFields: (keyof GetSearchSongsParams)[] = ["searchQuery"];
 
+      if (!httpRequest?.body) {
+        return badRequest("Request body is required");
+      }
+
       for (const field of requiredFields) {
-        if (!httpRequest?.body?.[field as keyof GetSearchSongsParams]) {
+        if (!((field as keyof GetSearchSongsParams) in httpRequest?.body)) {
           return badRequest(`Field ${field} is required`);
         }
       }

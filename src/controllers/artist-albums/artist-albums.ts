@@ -15,8 +15,12 @@ export class GetArtistAlbumsController implements IController {
         "limit",
       ];
 
+      if (!httpRequest?.body) {
+        return badRequest("Request body is required");
+      }
+
       for (const field of requiredFields) {
-        if (!httpRequest?.body?.[field as keyof GetArtistAlbumsParams]) {
+        if (!((field as keyof GetArtistAlbumsParams) in httpRequest?.body)) {
           return badRequest(`Field ${field} is required`);
         }
       }

@@ -20,8 +20,12 @@ export class GetSimpleLinkController implements IController {
         "duration",
       ];
 
+      if (!httpRequest?.body) {
+        return badRequest("Request body is required");
+      }
+
       for (const field of requiredFields) {
-        if (!httpRequest?.body?.[field as keyof GetSimpleLinkParams]) {
+        if (!((field as keyof GetSimpleLinkParams) in httpRequest?.body)) {
           return badRequest(`Field ${field} is required`);
         }
       }

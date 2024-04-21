@@ -15,8 +15,12 @@ export class GetPlaylistSongsController implements IController {
         "limit",
       ];
 
+      if (!httpRequest?.body) {
+        return badRequest("Request body is required");
+      }
+
       for (const field of requiredFields) {
-        if (!httpRequest?.body?.[field as keyof GetPlaylistSongsParams]) {
+        if (!((field as keyof GetPlaylistSongsParams) in httpRequest?.body)) {
           return badRequest(`Field ${field} is required`);
         }
       }
