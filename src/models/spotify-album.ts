@@ -2,7 +2,7 @@ import { MaxInt } from "@spotify/web-api-ts-sdk";
 import { SearchResultMetadata, Song } from "../@types/types";
 import Spotify from "../providers/audio/spotify";
 import SpotifySong from "./spotify-song";
-import Formatter from "../utils/formatter";
+import Formatter from "../utils/search/formatter";
 
 export class SpotifyAlbumError extends Error {
   constructor(message: string) {

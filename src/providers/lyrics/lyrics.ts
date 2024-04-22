@@ -1,5 +1,5 @@
 import Genius from "./types/genius";
-import Formatter from "../../utils/formatter";
+import Formatter from "../../utils/search/formatter";
 import { Song } from "../../@types/types";
 
 export class LyricsError extends Error {

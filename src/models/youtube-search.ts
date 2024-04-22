@@ -1,20 +1,24 @@
 import {
   SEARCH_OPTIONS_TYPE,
-  SIMPLE_LINK_METADATA,
+  SimpleLinkMetadata,
   Song,
   SongResult,
 } from "../@types/types";
-import { SongDetailed, VideoDetailed } from "../library/ytmusic/src";
-import { getBestResult, mathingLogger, orderResults } from "../utils/mathing";
-import { ISRC_REGEX, SEARCH_OPTIONS } from "../utils/search-options";
+import {
+  getBestResult,
+  mathingLogger,
+  orderResults,
+} from "../utils/search/mathing";
+import { ISRC_REGEX, SEARCH_OPTIONS } from "../utils/search/search-options";
 import YoutubeMusic from "../providers/audio/ytmusic";
-import Formatter from "../utils/formatter";
+import Formatter from "../utils/search/formatter";
 import { GetSimpleLinkParams } from "../controllers/simple-link/protocols";
+import { SongDetailed, VideoDetailed } from "../services/ytmusic/@types/types";
 
 export default class YoutubeSearch {
   public static async fromParams(
     params: GetSimpleLinkParams
-  ): Promise<SIMPLE_LINK_METADATA> {
+  ): Promise<SimpleLinkMetadata> {
     const song: Song = params as Song;
 
     try {
@@ -25,12 +29,10 @@ export default class YoutubeSearch {
         message: "Simple link generated successfully",
         link: youtubeUrl,
       };
-    } catch (error) {
-      console.error("Error generating simple link:", error);
-
+    } catch (error: any) {
       return {
         success: false,
-        message: "Error generating simple link",
+        message: `Error generating simple link, ${error.message}`,
         link: null,
       };
     }

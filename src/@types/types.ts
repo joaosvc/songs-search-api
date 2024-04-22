@@ -61,9 +61,16 @@ export const SEARCH_OPTIONS_TYPE = type({
   limit: "number",
 });
 
-export type SIMPLE_LINK_METADATA = typeof SIMPLE_LINK_METADATA.infer;
-export const SIMPLE_LINK_METADATA = type({
+export type SimpleLinkMetadata = typeof SimpleLinkMetadata.infer;
+export const SimpleLinkMetadata = type({
   success: "boolean",
   message: "string",
   link: union("string", "null"),
+});
+
+export type AudioFormatsMetadata = typeof AudioFormatsMetadata.infer;
+export const AudioFormatsMetadata = type({
+  success: "boolean",
+  message: "string",
+  formats: ["unknown", "[]"],
 });

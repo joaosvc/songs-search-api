@@ -5,7 +5,7 @@ import {
 import { badRequest, ok, serverError } from "../helpers";
 import { HttpRequest, HttpResponse, IController } from "../protocols";
 import { GetSearchSongsParams } from "./protocols";
-import Parser from "../../utils/parser";
+import Parser from "../../utils/search/parser";
 
 export class GetSearchSongsController implements IController {
   async handle(

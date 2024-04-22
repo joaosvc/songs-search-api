@@ -1,7 +1,7 @@
 import { SimplifiedTrack, Track } from "@spotify/web-api-ts-sdk";
 import { SearchResultMetadata, Song } from "../@types/types";
 import Spotify from "../providers/audio/spotify";
-import Formatter from "../utils/formatter";
+import Formatter from "../utils/search/formatter";
 
 export class SpotifySongError extends Error {
   constructor(message: string) {

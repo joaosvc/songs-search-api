@@ -1,4 +1,4 @@
-import { SIMPLE_LINK_METADATA } from "../../@types/types";
+import { SimpleLinkMetadata } from "../../@types/types";
 import { badRequest, ok, serverError } from "../helpers";
 import { HttpRequest, HttpResponse, IController } from "../protocols";
 import { GetSimpleLinkParams } from "./protocols";
@@ -7,7 +7,7 @@ import YoutubeSearch from "../../models/youtube-search";
 export class GetSimpleLinkController implements IController {
   async handle(
     httpRequest: HttpRequest<GetSimpleLinkParams>
-  ): Promise<HttpResponse<SIMPLE_LINK_METADATA | string>> {
+  ): Promise<HttpResponse<SimpleLinkMetadata | string>> {
     try {
       const requiredFields: (keyof GetSimpleLinkParams)[] = [
         "name",
@@ -32,7 +32,7 @@ export class GetSimpleLinkController implements IController {
 
       const metadata = await YoutubeSearch.fromParams(httpRequest.body!);
 
-      return ok<SIMPLE_LINK_METADATA>(metadata);
+      return ok<SimpleLinkMetadata>(metadata);
     } catch (error) {
       if (error instanceof Error) {
         return badRequest(error.message);

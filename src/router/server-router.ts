@@ -6,6 +6,7 @@ import { GetPlaylistSongsController } from "../controllers/playlist-songs/playli
 import { GetAlbumSongsController } from "../controllers/album-songs/album-songs";
 import { GetArtistAlbumsController } from "../controllers/artist-albums/artist-albums";
 import { GetSimpleLinkController } from "../controllers/simple-link/simple-link";
+import { GetAudioFormatsController } from "../controllers/audio-formats/audio-formats";
 
 const serverRouter: Router = Router();
 const corsOptions: CorsOptions = {
@@ -20,6 +21,7 @@ serverRouter.use(
     "/search-playlist-songs",
     "/search-album-songs",
     "/simple-link",
+    "/audio-formats",
   ],
   cors(corsOptions),
   express.json()
@@ -69,6 +71,16 @@ serverRouter.post("/simple-link", async (req, res) => {
   const getSimpleLinkController = new GetSimpleLinkController();
 
   const { body, statusCode } = await getSimpleLinkController.handle({
+    body: req.body,
+  });
+
+  res.status(statusCode).send(body);
+});
+
+serverRouter.post("/audio-formats", async (req, res) => {
+  const getAudioFormatsController = new GetAudioFormatsController();
+
+  const { body, statusCode } = await getAudioFormatsController.handle({
     body: req.body,
   });
 

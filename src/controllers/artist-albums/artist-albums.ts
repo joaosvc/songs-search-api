@@ -2,7 +2,7 @@ import { SearchResultMetadata } from "../../@types/types";
 import { badRequest, ok, serverError } from "../helpers";
 import { HttpRequest, HttpResponse, IController } from "../protocols";
 import { GetArtistAlbumsParams } from "./protocols";
-import Parser from "../../utils/parser";
+import Parser from "../../utils/search/parser";
 
 export class GetArtistAlbumsController implements IController {
   async handle(

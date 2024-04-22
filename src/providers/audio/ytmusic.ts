@@ -1,8 +1,9 @@
-import YTMusic, {
+import {
   SongDetailed,
   SongFull,
   VideoDetailed,
-} from "../../library/ytmusic/src/";
+} from "../../services/ytmusic/@types/types";
+import YTMusicService from "../../services/ytmusic/ytmusic-service";
 
 export class YoutubeMusicError extends Error {
   constructor(message: string) {
@@ -12,12 +13,12 @@ export class YoutubeMusicError extends Error {
 }
 
 export default class YoutubeMusic {
-  public static instance: YTMusic = {} as YTMusic;
+  public static instance: YTMusicService = {} as YTMusicService;
 
   public static async initialize() {
-    if (!(this.instance instanceof YTMusic)) {
+    if (!(this.instance instanceof YTMusicService)) {
       try {
-        this.instance = new YTMusic();
+        this.instance = new YTMusicService();
         await this.instance.initialize();
       } catch (error) {
         console.error("Error initializing YoutubeMusic", error);
