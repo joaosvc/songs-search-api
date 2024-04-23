@@ -329,7 +329,6 @@ export default class YoutubeService {
     url.searchParams.set("hl", options.lang || "en");
     url.searchParams.set("html5", "1");
 
-    console.log(url.toString());
     const body: string = await exposedMiniget(url.toString(), options).text();
 
     let info: any = QueryString.parse(body);
