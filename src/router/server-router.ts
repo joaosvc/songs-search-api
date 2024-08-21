@@ -38,17 +38,6 @@ serverRouter.post("/search-songs", async (req, res) => {
   res.status(statusCode).send(body);
 });
 
-serverRouter.get("/full-search-songs", async (req, res) => {
-  const getFullSearchSongsController = new GetFullSearchSongsController();
-
-  const { body, statusCode } = await getFullSearchSongsController.handle({
-    body: req.body,
-    params: req.query,
-  });
-
-  res.status(statusCode).send(body);
-});
-
 serverRouter.post("/search-playlist-songs", async (req, res) => {
   const getPlaylistSongsController = new GetPlaylistSongsController();
 
@@ -74,6 +63,17 @@ serverRouter.post("/search-artist-albums", async (req, res) => {
 
   const { body, statusCode } = await getArtistAlbumsController.handle({
     body: req.body,
+  });
+
+  res.status(statusCode).send(body);
+});
+
+serverRouter.get("/full-simple-link", async (req, res) => {
+  const getFullSearchSongsController = new GetFullSearchSongsController();
+
+  const { body, statusCode } = await getFullSearchSongsController.handle({
+    body: req.body,
+    params: req.query,
   });
 
   res.status(statusCode).send(body);
