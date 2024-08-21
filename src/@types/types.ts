@@ -61,11 +61,17 @@ export const SEARCH_OPTIONS_TYPE = type({
   limit: "number",
 });
 
+export type YoutubeSearchResult = typeof YoutubeSearchResult.infer;
+export const YoutubeSearchResult = type({
+  youtubeUrl: "string | null",
+  bestScore: "string | number | null",
+});
+
 export type SimpleLinkMetadata = typeof SimpleLinkMetadata.infer;
 export const SimpleLinkMetadata = type({
   success: "boolean",
   message: "string",
-  link: union("string", "null"),
+  searchResult: union(YoutubeSearchResult, "null"),
 });
 
 export type FullSimpleLinkMetadata = typeof FullSimpleLinkMetadata.infer;

@@ -3,6 +3,7 @@ import {
   SimpleLinkMetadata,
   Song,
   SongResult,
+  YoutubeSearchResult,
 } from "../@types/types";
 import {
   getBestResult,
@@ -22,18 +23,18 @@ export default class YoutubeSearch {
     const song: Song = params as Song;
 
     try {
-      const youtubeUrl = await this.search(song);
+      const searchResult = await this.search(song);
 
       return {
         success: true,
         message: "Simple link generated successfully",
-        link: youtubeUrl,
+        searchResult: searchResult,
       };
     } catch (error: any) {
       return {
         success: false,
         message: `Error generating simple link, ${error.message}`,
-        link: null,
+        searchResult: null,
       };
     }
   }
@@ -42,8 +43,9 @@ export default class YoutubeSearch {
     song: Song,
     onlyVerified: boolean = false,
     filterResults: boolean = true
-  ): Promise<string | null> {
+  ): Promise<YoutubeSearchResult> {
     let youtubeUrl = null;
+    let linkScore: number | string = 100;
 
     const searchQuery = Formatter.createSongTitle(
       song.name,
@@ -85,6 +87,7 @@ export default class YoutubeSearch {
             );
 
             youtubeUrl = bestIsrc.url;
+            linkScore = Number(score);
           }
         }
       }
@@ -112,6 +115,7 @@ export default class YoutubeSearch {
               );
 
               youtubeUrl = isrcResult.url;
+              linkScore = "ISRC";
             } else {
               mathingLogger(
                 `[${song.songId}] Have to filter results: ${filterResults}`
@@ -147,6 +151,7 @@ export default class YoutubeSearch {
                   );
 
                   youtubeUrl = bestResult.url;
+                  linkScore = bestScore;
                 } else {
                   results = { ...results, ...newResults };
                 }
@@ -164,6 +169,7 @@ export default class YoutubeSearch {
             );
 
             youtubeUrl = bestResult.url;
+            linkScore = bestScore;
           } else {
             mathingLogger(`[${song.songId}] No results found`);
           }
@@ -173,7 +179,10 @@ export default class YoutubeSearch {
       youtubeUrl = song.url;
     }
 
-    return youtubeUrl;
+    return {
+      youtubeUrl,
+      bestScore: linkScore,
+    };
   }
 
   public static async getResults(

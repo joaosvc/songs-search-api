@@ -27,7 +27,7 @@ export class GetFullSearchSongsController implements IController {
           await Promise.all(
             songs.map((song: Song) => YoutubeSearch.fromParams(song))
           )
-        ).filter((song) => song.success && song.link)
+        ).filter((song) => song.success && song.searchResult)
       );
 
       return ok({
