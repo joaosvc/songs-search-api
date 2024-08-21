@@ -1,4 +1,5 @@
 import express from "express";
+import { ParsedQs } from "qs";
 
 export interface HttpResponse<T> {
   statusCode: HttpStatusCode;
@@ -6,7 +7,7 @@ export interface HttpResponse<T> {
 }
 
 export interface HttpRequest<B> {
-  params?: Record<string, string>;
+  params?: Record<string, string> | ParsedQs;
   headers?: Record<string, string>;
   body?: B;
 }

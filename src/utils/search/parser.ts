@@ -1,6 +1,7 @@
 import {
   SearchAlbumsResultMetadata,
   SearchResultMetadata,
+  Song,
 } from "../../@types/types";
 import SpotifyAlbum from "../../models/spotify-album";
 import SpotifyArtist from "../../models/spotify-artist";
@@ -72,6 +73,41 @@ export default class Parser {
     }
 
     return SpotifySong.buildSearchResultMetadata();
+  }
+
+  public static async searchAllSongs(request: string): Promise<Song[]> {
+    let currentOffset = 0;
+    let hasMore = true;
+    let result: Song[] = [];
+    let nextId = null;
+
+    while (hasMore) {
+      const metadata = await Parser.searchSongs(
+        nextId ? nextId : request,
+        currentOffset
+      );
+
+      if (hasMore && metadata.nextOffset) {
+        currentOffset = metadata.nextOffset;
+        nextId = metadata.nextId;
+      } else {
+        hasMore = false;
+      }
+
+      if ("songs" in metadata) {
+        result = result.concat(metadata.songs);
+      } else if ("albums" in metadata) {
+        for (const album of metadata.albums) {
+          const albumMetadata = await Parser.searchSongs(album);
+
+          if ("songs" in albumMetadata) {
+            result = result.concat(albumMetadata.songs);
+          }
+        }
+      }
+    }
+
+    return result;
   }
 
   public static async searchPlaylistSongs(

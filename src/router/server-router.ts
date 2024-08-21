@@ -7,6 +7,7 @@ import { GetAlbumSongsController } from "../controllers/album-songs/album-songs"
 import { GetArtistAlbumsController } from "../controllers/artist-albums/artist-albums";
 import { GetSimpleLinkController } from "../controllers/simple-link/simple-link";
 import { GetAudioFormatsController } from "../controllers/audio-formats/audio-formats";
+import { GetFullSearchSongsController } from "../controllers/full-search-songs/full-search-songs";
 
 const serverRouter: Router = Router();
 const corsOptions: CorsOptions = {
@@ -32,6 +33,17 @@ serverRouter.post("/search-songs", async (req, res) => {
 
   const { body, statusCode } = await getSearchSongsController.handle({
     body: req.body,
+  });
+
+  res.status(statusCode).send(body);
+});
+
+serverRouter.get("/full-search-songs", async (req, res) => {
+  const getFullSearchSongsController = new GetFullSearchSongsController();
+
+  const { body, statusCode } = await getFullSearchSongsController.handle({
+    body: req.body,
+    params: req.query,
   });
 
   res.status(statusCode).send(body);

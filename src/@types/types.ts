@@ -68,6 +68,11 @@ export const SimpleLinkMetadata = type({
   link: union("string", "null"),
 });
 
+export type FullSimpleLinkMetadata = typeof FullSimpleLinkMetadata.infer;
+export const FullSimpleLinkMetadata = type({
+  links: [SimpleLinkMetadata, "[]"],
+});
+
 export type AudioFormatsMetadata = typeof AudioFormatsMetadata.infer;
 export const AudioFormatsMetadata = type({
   success: "boolean",
