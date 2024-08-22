@@ -68,7 +68,7 @@ serverRouter.post("/search-artist-albums", async (req, res) => {
   res.status(statusCode).send(body);
 });
 
-serverRouter.get("/full-simple-link", async (req, res) => {
+serverRouter.get("/full-search-songs", async (req, res) => {
   const getFullSearchSongsController = new GetFullSearchSongsController();
 
   const { body, statusCode } = await getFullSearchSongsController.handle({
