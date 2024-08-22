@@ -1,8 +1,4 @@
-import {
-  FullSimpleLinkMetadata,
-  SimpleLinkMetadata,
-  Song,
-} from "../../@types/types";
+import { FullSimpleLinkMetadata, Song } from "../../@types/types";
 import { badRequest, ok, serverError } from "../helpers";
 import { HttpRequest, HttpResponse, IController } from "../protocols";
 import { GetFullSearchSongsParams } from "./protocols";
@@ -20,18 +16,25 @@ export class GetFullSearchSongsController implements IController {
         return badRequest("Missing searchQuery");
       }
 
-      const searchResult = await Parser.searchAllSongs(searchQuery);
+      const searchResult: any = await Parser.searchSongs(searchQuery);
+      searchResult.type = "songs" in searchResult ? "songs" : "albums";
 
-      const processedSongs = <SimpleLinkMetadata[]>(
-        (
+      if ("songs" in searchResult) {
+        searchResult.metadata = (
           await Promise.all(
-            searchResult.map((song: Song) => YoutubeSearch.fromParams(song))
+            searchResult.songs.map((song: Song) =>
+              YoutubeSearch.fromParams(song)
+            )
           )
-        ).filter((metadata) => metadata.success && metadata.song)
-      );
+        ).filter((metadata) => metadata.success && metadata.song);
+        delete searchResult.songs;
+      } else {
+        searchResult.metadata = searchResult.albums;
+        delete searchResult.albums;
+      }
 
-      return ok({
-        metadata: processedSongs,
+      return ok<any>({
+        ...searchResult,
       });
     } catch (error) {
       if (error instanceof Error) {

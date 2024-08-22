@@ -76,11 +76,17 @@ export const SimpleLinkMetadata = type({
   success: "boolean",
   message: "string",
   song: union(YoutubeSearchResult, "null"),
+  album: union("string[]", "null"),
 });
 
 export type FullSimpleLinkMetadata = typeof FullSimpleLinkMetadata.infer;
 export const FullSimpleLinkMetadata = type({
-  metadata: [SimpleLinkMetadata, "[]"],
+  metadata: "any",
+  offset: "number",
+  limit: "number",
+  hasMore: "boolean",
+  nextId: union("string", "null"),
+  nextOffset: union("number", "null"),
 });
 
 export type AudioFormatsMetadata = typeof AudioFormatsMetadata.infer;

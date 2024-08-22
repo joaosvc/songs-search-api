@@ -29,13 +29,13 @@ export default class YoutubeSearch {
         success: true,
         message: "Simple link generated successfully",
         song: searchResult,
-      };
+      } as any;
     } catch (error: any) {
       return {
         success: false,
         message: `Error generating simple link, ${error.message}`,
         song: null,
-      };
+      } as any;
     }
   }
 
