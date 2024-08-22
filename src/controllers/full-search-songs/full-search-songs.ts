@@ -26,8 +26,6 @@ export class GetFullSearchSongsController implements IController {
 
       const { searchQuery, offset, limit } = httpRequest.body!;
 
-      console.log("Data:", searchQuery, offset, limit);
-
       const searchResult: any = await Parser.searchSongs(
         searchQuery,
         offset,
