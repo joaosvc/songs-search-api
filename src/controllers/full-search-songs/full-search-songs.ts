@@ -20,18 +20,18 @@ export class GetFullSearchSongsController implements IController {
         return badRequest("Missing searchQuery");
       }
 
-      const songs = await Parser.searchAllSongs(searchQuery);
+      const searchResult = await Parser.searchAllSongs(searchQuery);
 
       const processedSongs = <SimpleLinkMetadata[]>(
         (
           await Promise.all(
-            songs.map((song: Song) => YoutubeSearch.fromParams(song))
+            searchResult.map((song: Song) => YoutubeSearch.fromParams(song))
           )
-        ).filter((song) => song.success && song.searchResult)
+        ).filter((metadata) => metadata.success && metadata.song)
       );
 
       return ok({
-        links: processedSongs,
+        metadata: processedSongs,
       });
     } catch (error) {
       if (error instanceof Error) {

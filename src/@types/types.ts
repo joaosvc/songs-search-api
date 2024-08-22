@@ -63,7 +63,11 @@ export const SEARCH_OPTIONS_TYPE = type({
 
 export type YoutubeSearchResult = typeof YoutubeSearchResult.infer;
 export const YoutubeSearchResult = type({
-  youtubeUrl: "string | null",
+  name: "string",
+  url: "string",
+  album: "string",
+  artists: ["string", "[]"],
+  duration: "number",
   bestScore: "string | number | null",
 });
 
@@ -71,12 +75,12 @@ export type SimpleLinkMetadata = typeof SimpleLinkMetadata.infer;
 export const SimpleLinkMetadata = type({
   success: "boolean",
   message: "string",
-  searchResult: union(YoutubeSearchResult, "null"),
+  song: union(YoutubeSearchResult, "null"),
 });
 
 export type FullSimpleLinkMetadata = typeof FullSimpleLinkMetadata.infer;
 export const FullSimpleLinkMetadata = type({
-  links: [SimpleLinkMetadata, "[]"],
+  metadata: [SimpleLinkMetadata, "[]"],
 });
 
 export type AudioFormatsMetadata = typeof AudioFormatsMetadata.infer;

@@ -28,13 +28,13 @@ export default class YoutubeSearch {
       return {
         success: true,
         message: "Simple link generated successfully",
-        searchResult: searchResult,
+        song: searchResult,
       };
     } catch (error: any) {
       return {
         success: false,
         message: `Error generating simple link, ${error.message}`,
-        searchResult: null,
+        song: null,
       };
     }
   }
@@ -43,8 +43,8 @@ export default class YoutubeSearch {
     song: Song,
     onlyVerified: boolean = false,
     filterResults: boolean = true
-  ): Promise<YoutubeSearchResult> {
-    let youtubeUrl = null;
+  ): Promise<YoutubeSearchResult | null> {
+    let youtubeResult = null;
     let linkScore: number | string = 100;
 
     const searchQuery = Formatter.createSongTitle(
@@ -86,13 +86,13 @@ export default class YoutubeSearch {
               `[${song.songId}] Best ISRC result is ${bestIsrc.url} with score ${score}`
             );
 
-            youtubeUrl = bestIsrc.url;
+            youtubeResult = bestIsrc;
             linkScore = Number(score);
           }
         }
       }
 
-      if (youtubeUrl === null) {
+      if (youtubeResult === null || youtubeResult.url === null) {
         let results: Record<number, SongResult> = {};
 
         await Promise.all(
@@ -114,7 +114,7 @@ export default class YoutubeSearch {
                 `[${song.songId}] Best ISRC result is ${isrcResult.url}`
               );
 
-              youtubeUrl = isrcResult.url;
+              youtubeResult = isrcResult;
               linkScore = "ISRC";
             } else {
               mathingLogger(
@@ -150,7 +150,7 @@ export default class YoutubeSearch {
                     bestScore
                   );
 
-                  youtubeUrl = bestResult.url;
+                  youtubeResult = bestResult;
                   linkScore = bestScore;
                 } else {
                   results = { ...results, ...newResults };
@@ -160,7 +160,7 @@ export default class YoutubeSearch {
           })
         );
 
-        if (youtubeUrl === null) {
+        if (youtubeResult === null || youtubeResult.url === null) {
           if (Object.keys(results).length > 0) {
             const [bestScore, bestResult] = getBestResult(results);
 
@@ -168,7 +168,7 @@ export default class YoutubeSearch {
               `[${song.songId}] Returning best result ${bestResult.url} with score ${bestScore}`
             );
 
-            youtubeUrl = bestResult.url;
+            youtubeResult = bestResult;
             linkScore = bestScore;
           } else {
             mathingLogger(`[${song.songId}] No results found`);
@@ -176,13 +176,21 @@ export default class YoutubeSearch {
         }
       }
     } else {
-      youtubeUrl = song.url;
+      youtubeResult = song;
     }
 
-    return {
-      youtubeUrl,
-      bestScore: linkScore,
-    };
+    if (youtubeResult) {
+      return {
+        name: youtubeResult?.name,
+        url: youtubeResult?.url,
+        album: youtubeResult?.album,
+        artists: youtubeResult?.artists,
+        duration: youtubeResult?.duration,
+        bestScore: linkScore,
+      };
+    } else {
+      return null;
+    }
   }
 
   public static async getResults(
