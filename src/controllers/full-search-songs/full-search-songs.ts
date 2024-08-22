@@ -10,13 +10,30 @@ export class GetFullSearchSongsController implements IController {
     httpRequest: HttpRequest<GetFullSearchSongsParams>
   ): Promise<HttpResponse<FullSimpleLinkMetadata | string>> {
     try {
-      const searchQuery = String(httpRequest?.params?.searchQuery!);
+      const requiredFields: (keyof GetFullSearchSongsParams)[] = [
+        "searchQuery",
+      ];
 
-      if (!searchQuery) {
-        return badRequest("Missing searchQuery");
+      if (!httpRequest?.body) {
+        return badRequest("Request body is required");
       }
 
-      const searchResult: any = await Parser.searchSongs(searchQuery);
+      for (const field of requiredFields) {
+        if (!((field as keyof GetFullSearchSongsParams) in httpRequest?.body)) {
+          return badRequest(`Field ${field} is required`);
+        }
+      }
+
+      const { searchQuery, offset, limit } = httpRequest.body!;
+
+      console.log("Data:", searchQuery, offset, limit);
+
+      const searchResult: any = await Parser.searchSongs(
+        searchQuery,
+        offset,
+        limit
+      );
+
       searchResult.type = "songs" in searchResult ? "songs" : "albums";
 
       if ("songs" in searchResult) {

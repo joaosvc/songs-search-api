@@ -19,6 +19,7 @@ const corsOptions: CorsOptions = {
 serverRouter.use(
   [
     "/search-songs",
+    "/full-search-songs",
     "/search-playlist-songs",
     "/search-album-songs",
     "/simple-link",
@@ -32,6 +33,16 @@ serverRouter.post("/search-songs", async (req, res) => {
   const getSearchSongsController = new GetSearchSongsController();
 
   const { body, statusCode } = await getSearchSongsController.handle({
+    body: req.body,
+  });
+
+  res.status(statusCode).send(body);
+});
+
+serverRouter.post("/full-search-songs", async (req, res) => {
+  const getFullSearchSongsController = new GetFullSearchSongsController();
+
+  const { body, statusCode } = await getFullSearchSongsController.handle({
     body: req.body,
   });
 
@@ -63,17 +74,6 @@ serverRouter.post("/search-artist-albums", async (req, res) => {
 
   const { body, statusCode } = await getArtistAlbumsController.handle({
     body: req.body,
-  });
-
-  res.status(statusCode).send(body);
-});
-
-serverRouter.get("/full-search-songs", async (req, res) => {
-  const getFullSearchSongsController = new GetFullSearchSongsController();
-
-  const { body, statusCode } = await getFullSearchSongsController.handle({
-    body: req.body,
-    params: req.query,
   });
 
   res.status(statusCode).send(body);
