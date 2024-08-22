@@ -48,9 +48,7 @@ export class GetFullSearchSongsController implements IController {
         delete searchResult.albums;
       }
 
-      return ok<any>({
-        ...searchResult,
-      });
+      return ok<any>(searchResult);
     } catch (error) {
       if (error instanceof Error) {
         return badRequest(error.message);
