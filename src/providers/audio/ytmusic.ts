@@ -20,8 +20,8 @@ export default class YoutubeMusic {
       try {
         this.instance = new YTMusicService();
         await this.instance.initialize();
-      } catch (error) {
-        console.error("Error initializing YoutubeMusic", error);
+      } catch (error: any) {
+        console.error("Error initializing YoutubeMusic", error.message);
       }
     }
   }
@@ -32,8 +32,11 @@ export default class YoutubeMusic {
       const results = await this.instance.searchSongs("a");
 
       return results.length > 0;
-    } catch (error) {
-      console.error("Error validating connection to YouTubeMusic", error);
+    } catch (error: any) {
+      console.error(
+        "Error validating connection to YouTubeMusic",
+        error.message
+      );
       return false;
     }
   }
@@ -49,8 +52,8 @@ export default class YoutubeMusic {
       ) as SongDetailed[] | VideoDetailed[];
 
       return searchResults;
-    } catch (error) {
-      console.error("Error searching in YouTubeMusic", error);
+    } catch (error: any) {
+      console.error("Error searching in YouTubeMusic", error.message);
       return [];
     }
   }
@@ -62,8 +65,8 @@ export default class YoutubeMusic {
       const searchResults = await this.instance.searchSongs(searchTerm);
 
       return searchResults;
-    } catch (error) {
-      console.error("Error searching songs in YouTubeMusic", error);
+    } catch (error: any) {
+      console.error("Error searching songs in YouTubeMusic", error.message);
       return [];
     }
   }
@@ -77,8 +80,8 @@ export default class YoutubeMusic {
       const searchResults = await this.instance.searchVideos(searchTerm);
 
       return searchResults;
-    } catch (error) {
-      console.error("Error searching videos in YouTubeMusic", error);
+    } catch (error: any) {
+      console.error("Error searching videos in YouTubeMusic", error.message);
       return [];
     }
   }
@@ -90,8 +93,8 @@ export default class YoutubeMusic {
       const song = await this.instance.getSong(videoId);
 
       return song;
-    } catch (error) {
-      console.error("Error rettriving song from YouTubeMusic", error);
+    } catch (error: any) {
+      console.error("Error rettriving song from YouTubeMusic", error.message);
       return null;
     }
   }
@@ -103,8 +106,8 @@ export default class YoutubeMusic {
       const video = await this.instance.getVideo(videoId);
 
       return video;
-    } catch (error) {
-      console.error("Error rettriving video from YouTubeMusic", error);
+    } catch (error: any) {
+      console.error("Error rettriving video from YouTubeMusic", error.message);
       return null;
     }
   }
