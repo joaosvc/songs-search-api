@@ -79,8 +79,8 @@ export const SimpleLinkMetadata = type({
   album: union("string[]", "null"),
 });
 
-export type FullSimpleLinkMetadata = typeof FullSimpleLinkMetadata.infer;
-export const FullSimpleLinkMetadata = type({
+export type FullSearchResultMetadata = typeof FullSearchResultMetadata.infer;
+export const FullSearchResultMetadata = type({
   metadata: "any",
   offset: "number",
   limit: "number",

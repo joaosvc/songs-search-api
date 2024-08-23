@@ -1,4 +1,4 @@
-import { FullSimpleLinkMetadata, Song } from "../../@types/types";
+import { FullSearchResultMetadata, Song } from "../../@types/types";
 import { badRequest, ok, serverError } from "../helpers";
 import { HttpRequest, HttpResponse, IController } from "../protocols";
 import { GetFullSearchSongsParams } from "./protocols";
@@ -8,7 +8,7 @@ import YoutubeSearch from "../../models/youtube-search";
 export class GetFullSearchSongsController implements IController {
   async handle(
     httpRequest: HttpRequest<GetFullSearchSongsParams>
-  ): Promise<HttpResponse<FullSimpleLinkMetadata | string>> {
+  ): Promise<HttpResponse<FullSearchResultMetadata | string>> {
     try {
       const requiredFields: (keyof GetFullSearchSongsParams)[] = [
         "searchQuery",
