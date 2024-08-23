@@ -53,7 +53,8 @@ export default class SpotifySong {
 
   public static buildSearchResultMetadata(song?: Song): SearchResultMetadata {
     return {
-      songs: song ? [song] : [],
+      metadata: song ? [song] : [],
+      type: "songs",
       hasMore: false,
       nextId: null,
       nextOffset: null,

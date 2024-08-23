@@ -49,7 +49,8 @@ export default class SpotifyPlaylist {
       : null;
 
     return {
-      songs: songs,
+      metadata: songs,
+      type: "songs",
       hasMore: !!rawPlaylistItems.next,
       nextId: rawNextPlaylistId,
       nextOffset: rawNextPlaylistOffset,

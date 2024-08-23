@@ -1,8 +1,4 @@
-import {
-  SearchAlbumsResultMetadata,
-  SearchResultMetadata,
-  Song,
-} from "../../@types/types";
+import { SearchResultMetadata, Song } from "../../@types/types";
 import SpotifyAlbum from "../../models/spotify-album";
 import SpotifyArtist from "../../models/spotify-artist";
 import SpotifyPlaylist from "../../models/spotify-playlist";
@@ -15,7 +11,7 @@ export default class Parser {
     request: string,
     offset?: number,
     limit?: number
-  ): Promise<SearchResultMetadata | SearchAlbumsResultMetadata> {
+  ): Promise<SearchResultMetadata> {
     // Remove /intl-xxx/ from Spotify URLs with regex
     request = request.replace(/\/intl-\w+\//, "/");
 
@@ -94,14 +90,14 @@ export default class Parser {
         hasMore = false;
       }
 
-      if ("songs" in metadata) {
-        result = result.concat(metadata.songs);
-      } else if ("albums" in metadata) {
-        for (const album of metadata.albums) {
+      if (metadata.type === "songs") {
+        result.push(...(metadata.metadata as Song[]));
+      } else if (metadata.type === "albums") {
+        for (const album of metadata.metadata as string[]) {
           const albumMetadata = await Parser.searchSongs(album);
 
-          if ("songs" in albumMetadata) {
-            result = result.concat(albumMetadata.songs);
+          if (albumMetadata.type === "songs") {
+            result.push(...(albumMetadata.metadata as Song[]));
           }
         }
       }
@@ -140,7 +136,7 @@ export default class Parser {
     artistId: string,
     offset?: number,
     limit?: number
-  ): Promise<SearchAlbumsResultMetadata> {
+  ): Promise<SearchResultMetadata> {
     try {
       return await SpotifyArtist.fromUrl(artistId, offset, limit);
     } catch (error: any) {

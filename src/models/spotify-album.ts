@@ -58,7 +58,8 @@ export default class SpotifyAlbum {
       : null;
 
     return {
-      songs: songs,
+      metadata: songs,
+      type: "songs",
       hasMore: !!rawAlbumTracks.next,
       nextId: rawNextAlbumId,
       nextOffset: rawNextAlbumOffset,

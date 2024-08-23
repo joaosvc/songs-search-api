@@ -1,7 +1,4 @@
-import {
-  SearchAlbumsResultMetadata,
-  SearchResultMetadata,
-} from "../../@types/types";
+import { SearchResultMetadata } from "../../@types/types";
 import { badRequest, ok, serverError } from "../helpers";
 import { HttpRequest, HttpResponse, IController } from "../protocols";
 import { GetSearchSongsParams } from "./protocols";
@@ -10,9 +7,7 @@ import Parser from "../../utils/search/parser";
 export class GetSearchSongsController implements IController {
   async handle(
     httpRequest: HttpRequest<GetSearchSongsParams>
-  ): Promise<
-    HttpResponse<SearchResultMetadata | SearchAlbumsResultMetadata | string>
-  > {
+  ): Promise<HttpResponse<SearchResultMetadata | string>> {
     try {
       const requiredFields: (keyof GetSearchSongsParams)[] = ["searchQuery"];
 
@@ -30,7 +25,7 @@ export class GetSearchSongsController implements IController {
 
       const metadata = await Parser.searchSongs(searchQuery, offset, limit);
 
-      return ok<SearchResultMetadata | SearchAlbumsResultMetadata>(metadata);
+      return ok<SearchResultMetadata>(metadata);
     } catch (error) {
       if (error instanceof Error) {
         return badRequest(error.message);

@@ -36,18 +36,8 @@ export const SongResult = type({
 
 export type SearchResultMetadata = typeof SearchResultMetadata.infer;
 export const SearchResultMetadata = type({
-  songs: [Song, "[]"],
-  offset: "number",
-  limit: "number",
-  hasMore: "boolean",
-  nextId: union("string", "null"),
-  nextOffset: union("number", "null"),
-});
-
-export type SearchAlbumsResultMetadata =
-  typeof SearchAlbumsResultMetadata.infer;
-export const SearchAlbumsResultMetadata = type({
-  albums: ["string", "[]"],
+  metadata: union([Song, "[]"], "string[]"),
+  type: "string",
   offset: "number",
   limit: "number",
   hasMore: "boolean",

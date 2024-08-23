@@ -1,6 +1,6 @@
 import { MaxInt } from "@spotify/web-api-ts-sdk";
 import Spotify from "../providers/audio/spotify";
-import { SearchAlbumsResultMetadata } from "../@types/types";
+import { SearchResultMetadata } from "../@types/types";
 
 export class SpotifyArtistError extends Error {
   constructor(message: string) {
@@ -14,7 +14,7 @@ export default class SpotifyArtist {
     url: string,
     offset?: number,
     limit?: number
-  ): Promise<SearchAlbumsResultMetadata> {
+  ): Promise<SearchResultMetadata> {
     const rawArtistMeta = await Spotify.getArtist(url);
 
     const rawRequestLimit = (limit ? Math.min(limit, 50) : limit) as
@@ -38,7 +38,8 @@ export default class SpotifyArtist {
       : null;
 
     return {
-      albums: albums,
+      metadata: albums,
+      type: "albums",
       hasMore: !!rawArtistAlbums.next,
       nextId: rawNextArtistId,
       nextOffset: rawNextAlbumOffset,
