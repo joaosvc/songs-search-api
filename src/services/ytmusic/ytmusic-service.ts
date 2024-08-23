@@ -358,7 +358,11 @@ export default class YTMusicService {
     const data = await this.constructRequest("player", { videoId });
 
     const song = SongParser.parse(data);
-    if (song.videoId !== videoId) throw new Error("Invalid videoId");
+    if (song.videoId !== videoId) {
+      throw new Error(
+        `Invalid videoId did not match \"${videoId}\" and \"${song.videoId}\"`
+      );
+    }
     return song;
   }
 

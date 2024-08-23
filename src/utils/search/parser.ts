@@ -38,30 +38,32 @@ export default class Parser {
       ) {
         return await SpotifyArtist.fromUrl(request, offset, limit);
       } else if (YoutubeMusic.isValidUrl(request)) {
-        const songResult = await YoutubeMusic.getSong(
-          YoutubeMusic.getWatchId(request)!
-        );
+        const videoId = YoutubeMusic.getWatchId(request);
 
-        if (songResult != null) {
-          /**
-           * Exemple of Spotify Search Result
-           *
-           * SpotifySong.fromSearchTerm(`${songFull.artist.name} - ${songFull.name}`)
-           */
+        if (videoId !== null) {
+          const songResult = await YoutubeMusic.getSong(videoId);
 
-          const image = Formatter.getMaxImageUrl(songResult.thumbnails)!;
+          if (songResult != null) {
+            /**
+             * Exemple of Spotify Search Result
+             *
+             * SpotifySong.fromSearchTerm(`${songFull.artist.name} - ${songFull.name}`)
+             */
 
-          return SpotifySong.buildSearchResultMetadata({
-            name: songResult.name,
-            url: request,
-            image: image,
-            songId: songResult.videoId,
-            album: songResult.name,
-            artist: songResult.artist.name,
-            artists: [songResult.artist.name],
-            duration: songResult.duration,
-            isrc: null,
-          });
+            const image = Formatter.getMaxImageUrl(songResult.thumbnails)!;
+
+            return SpotifySong.buildSearchResultMetadata({
+              name: songResult.name,
+              url: request,
+              image: image,
+              songId: songResult.videoId,
+              album: songResult.name,
+              artist: songResult.artist.name,
+              artists: [songResult.artist.name],
+              duration: songResult.duration,
+              isrc: null,
+            });
+          }
         }
       }
     } catch (error: any) {

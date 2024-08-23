@@ -1,9 +1,8 @@
-import {
+import YTMusicService, {
   SongDetailed,
   SongFull,
   VideoDetailed,
-} from "../../services/ytmusic/@types/types";
-import YTMusicService from "../../services/ytmusic/ytmusic-service";
+} from "ytmusic-api";
 
 export class YoutubeMusicError extends Error {
   constructor(message: string) {
@@ -21,7 +20,7 @@ export default class YoutubeMusic {
         this.instance = new YTMusicService();
         await this.instance.initialize();
       } catch (error: any) {
-        console.error("Error initializing YoutubeMusic", error.message);
+        console.error("Error initializing YouTube", error.message);
       }
     }
   }
@@ -33,10 +32,7 @@ export default class YoutubeMusic {
 
       return results.length > 0;
     } catch (error: any) {
-      console.error(
-        "Error validating connection to YouTubeMusic",
-        error.message
-      );
+      console.error("Error validating connection to YouTube", error.message);
       return false;
     }
   }
@@ -53,7 +49,7 @@ export default class YoutubeMusic {
 
       return searchResults;
     } catch (error: any) {
-      console.error("Error searching in YouTubeMusic", error.message);
+      console.error("Error searching in YouTube", error.message);
       return [];
     }
   }
@@ -66,7 +62,7 @@ export default class YoutubeMusic {
 
       return searchResults;
     } catch (error: any) {
-      console.error("Error searching songs in YouTubeMusic", error.message);
+      console.error("Error searching songs in YouTube", error.message);
       return [];
     }
   }
@@ -81,7 +77,7 @@ export default class YoutubeMusic {
 
       return searchResults;
     } catch (error: any) {
-      console.error("Error searching videos in YouTubeMusic", error.message);
+      console.error("Error searching videos in YouTube", error.message);
       return [];
     }
   }
@@ -94,7 +90,7 @@ export default class YoutubeMusic {
 
       return song;
     } catch (error: any) {
-      console.error("Error rettriving song from YouTubeMusic", error.message);
+      console.error("Error rettriving song YouTube:", error.message);
       return null;
     }
   }
@@ -107,7 +103,7 @@ export default class YoutubeMusic {
 
       return video;
     } catch (error: any) {
-      console.error("Error rettriving video from YouTubeMusic", error.message);
+      console.error("Error rettriving video from YouTube", error.message);
       return null;
     }
   }

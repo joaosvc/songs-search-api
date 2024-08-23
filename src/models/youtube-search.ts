@@ -14,7 +14,7 @@ import { ISRC_REGEX, SEARCH_OPTIONS } from "../utils/search/search-options";
 import YoutubeMusic from "../providers/audio/ytmusic";
 import Formatter from "../utils/search/formatter";
 import { GetSimpleLinkParams } from "../controllers/simple-link/protocols";
-import { SongDetailed, VideoDetailed } from "../services/ytmusic/@types/types";
+import { SongDetailed, VideoDetailed } from "ytmusic-api";
 
 export default class YoutubeSearch {
   public static async fromParams(
@@ -45,7 +45,7 @@ export default class YoutubeSearch {
     filterResults: boolean = true
   ): Promise<YoutubeSearchResult | null> {
     let youtubeResult = null;
-    let linkScore: number | string = 100;
+    let linkScore: number | string = 100.0;
 
     const searchQuery = Formatter.createSongTitle(
       song.name,
@@ -180,6 +180,10 @@ export default class YoutubeSearch {
     }
 
     if (youtubeResult) {
+      if (typeof linkScore === "number") {
+        linkScore = linkScore.toFixed(2);
+      }
+
       return {
         name: youtubeResult?.name,
         url: youtubeResult?.url,
@@ -222,7 +226,7 @@ export default class YoutubeSearch {
 
     return searchResults.map((result) => {
       const isrcResult: RegExpMatchArray | null = searchTerm.match(ISRC_REGEX);
-      const artists = result.artists.map((artist) => artist.name);
+      const artists: string[] = [result.artist.name]; //result.artists.map((artist) => artist.name);
 
       return {
         source: "YoutubeMusic",
@@ -239,7 +243,7 @@ export default class YoutubeSearch {
         searchQuery: searchTerm,
         explicit: null,
         duration: +result.duration!,
-        views: +result.views!,
+        views: 0, //+result.views!,
       };
     });
   }
