@@ -115,4 +115,8 @@ export default class YoutubeMusic {
     );
     return match?.[1] ?? null;
   }
+
+  public static isValidUrl(url: string): boolean {
+    return this.getWatchId(url) !== null;
+  }
 }

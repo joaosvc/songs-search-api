@@ -37,7 +37,7 @@ export default class Parser {
         request.includes("artist")
       ) {
         return await SpotifyArtist.fromUrl(request, offset, limit);
-      } else if (request.includes("youtube.com/watch?v")) {
+      } else if (YoutubeMusic.isValidUrl(request)) {
         const songResult = await YoutubeMusic.getSong(
           YoutubeMusic.getWatchId(request)!
         );
