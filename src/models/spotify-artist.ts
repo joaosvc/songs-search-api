@@ -28,11 +28,9 @@ export default class SpotifyArtist {
       offset
     );
 
-    const albums: string[] = [];
-
-    for (const album of rawArtistAlbums.items) {
-      albums.push(album.external_urls.spotify);
-    }
+    const albums: string[] = await Promise.all(
+      rawArtistAlbums.items.map(async (album) => album.external_urls.spotify)
+    );
 
     const rawNextArtistId = Spotify.getIdFromUrl(rawArtistAlbums.next);
     const rawNextAlbumOffset = rawArtistAlbums.next

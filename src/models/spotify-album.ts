@@ -35,30 +35,22 @@ export default class SpotifyAlbum {
     const rawAlbumTracksItems = rawAlbumTracks.items.filter(
       (rawTrackMeta) => rawTrackMeta && !rawTrackMeta.is_local
     );
-    const songs: Song[] = [];
-
-    if (fetchTracks) {
-      await Promise.all(
-        rawAlbumTracksItems.map(async (rawTrackMeta) => {
+    const songs: Song[] = await Promise.all(
+      rawAlbumTracksItems.map(async (rawTrackMeta) => {
+        if (fetchTracks) {
           const newRawTrackMeta = await Spotify.getTrack(rawTrackMeta.id);
 
-          songs.push(
-            SpotifySong.songFromTrackMeta(newRawTrackMeta, {
-              album: rawAlbumMeta.name,
-            })
-          );
-        })
-      );
-    } else {
-      for (const rawSimpliedTrackMeta of rawAlbumTracksItems) {
-        songs.push(
-          SpotifySong.songFromSimplifiedTrackMeta(rawSimpliedTrackMeta, {
+          return SpotifySong.songFromTrackMeta(newRawTrackMeta, {
             album: rawAlbumMeta.name,
-            image: Formatter.getMaxImageUrl(rawAlbumMeta.images)!,
-          })
-        );
-      }
-    }
+          });
+        }
+
+        return SpotifySong.songFromSimplifiedTrackMeta(rawTrackMeta, {
+          album: rawAlbumMeta.name,
+          image: Formatter.getMaxImageUrl(rawAlbumMeta.images)!,
+        });
+      })
+    );
 
     const rawNextAlbumId = Spotify.getIdFromUrl(rawAlbumTracks.next);
     const rawNextAlbumOffset = rawAlbumTracks.next

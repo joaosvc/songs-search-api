@@ -27,20 +27,21 @@ export default class SpotifyPlaylist {
       offset
     );
 
-    const songs: Song[] = [];
-
-    for (const track of rawPlaylistItems.items) {
-      if (
-        !track ||
-        !track.track ||
-        track.track.is_local ||
-        track.track.type !== "track"
-      ) {
-        continue;
-      }
-
-      songs.push(SpotifySong.songFromTrackMeta(track.track));
-    }
+    const songs: Song[] = (
+      await Promise.all(
+        rawPlaylistItems.items.map(async (track) => {
+          if (
+            !track ||
+            !track.track ||
+            track.track.is_local ||
+            track.track.type !== "track"
+          ) {
+            return null;
+          }
+          return SpotifySong.songFromTrackMeta(track.track);
+        })
+      )
+    ).filter((song): song is Song => song !== null);
 
     const rawNextPlaylistId = Spotify.getIdFromUrl(rawPlaylistItems.next);
     const rawNextPlaylistOffset = rawPlaylistItems.next
