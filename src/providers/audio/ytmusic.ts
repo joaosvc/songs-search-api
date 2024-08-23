@@ -110,6 +110,9 @@ export default class YoutubeMusic {
   }
 
   public static getWatchId(url: string): string | null {
-    return url.match(/[?&]v=([^&]+)/)?.[1] ?? null;
+    const match = url.match(
+      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/|youtube\.com\/shorts\/)([^?&"'>]+)/
+    );
+    return match?.[1] ?? null;
   }
 }
