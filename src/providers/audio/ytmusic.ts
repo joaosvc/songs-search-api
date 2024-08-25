@@ -73,8 +73,6 @@ export default class YoutubeMusic {
       result.type === "SONG" ? "music" : "www"
     }.youtube.com/watch?v=${result.videoId}`;
 
-    console.log(result);
-
     return {
       name: result.name,
       videoId: result.videoId,

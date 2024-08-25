@@ -36,7 +36,9 @@ export default class YTMusicService {
    * Creates an instance of YTMusic
    * Make sure to call initialize()
    */
-  public constructor() {
+  public constructor(config?: {
+    proxy: { host: string; port: number } | null;
+  }) {
     this.cookiejar = new CookieJar();
     this.config = {};
     this.client = axios.create({
@@ -47,6 +49,12 @@ export default class YTMusicService {
         "Accept-Language": "en-US,en;q=0.5",
       },
       withCredentials: true,
+      ...(config?.proxy && {
+        proxy: {
+          host: config.proxy.host,
+          port: config.proxy.port,
+        },
+      }),
     });
 
     this.client.interceptors.request.use((req) => {
