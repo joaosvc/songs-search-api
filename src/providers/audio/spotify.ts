@@ -47,7 +47,7 @@ export default class Spotify {
 
       return results.tracks?.total > 0;
     } catch (error) {
-      console.error("Error validating connection to YouTubeMusic", error);
+      console.error("Error validating connection to Spotify", error);
       return false;
     }
   }

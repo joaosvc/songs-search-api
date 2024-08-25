@@ -4,6 +4,7 @@ import {
   Song,
   SongResult,
   YoutubeSearchResult,
+  YoutubeSong,
 } from "../@types/types";
 import {
   getBestResult,
@@ -14,7 +15,6 @@ import { ISRC_REGEX, SEARCH_OPTIONS } from "../utils/search/search-options";
 import YoutubeMusic from "../providers/audio/ytmusic";
 import Formatter from "../utils/search/formatter";
 import { GetSimpleLinkParams } from "../controllers/simple-link/protocols";
-import { SongDetailed, VideoDetailed } from "ytmusic-api";
 
 export default class YoutubeSearch {
   public static async fromParams(
@@ -188,6 +188,7 @@ export default class YoutubeSearch {
         name: youtubeResult?.name,
         url: youtubeResult?.url,
         album: youtubeResult?.album,
+        artist: youtubeResult?.artist,
         artists: youtubeResult?.artists,
         duration: youtubeResult?.duration,
         bestScore: linkScore,
@@ -201,19 +202,17 @@ export default class YoutubeSearch {
     searchTerm: string,
     options: SEARCH_OPTIONS_TYPE
   ): Promise<SongResult[]> {
-    let searchResults: SongDetailed[] | VideoDetailed[] = [];
+    let searchResults: YoutubeSong[] = [];
 
     try {
       if (options.filter === "songs") {
         searchResults = await YoutubeMusic.searchSongs(searchTerm);
-      } else if (options.filter === "videos") {
-        searchResults = await YoutubeMusic.searchVideos(searchTerm);
       } else {
-        searchResults = await YoutubeMusic.search(searchTerm);
+        searchResults = await YoutubeMusic.searchVideos(searchTerm);
       }
     } catch (error) {
       console.error(
-        `Error rettriving YouTubeMusic result as options ${JSON.stringify(
+        `Error rettriving Youtube result as options ${JSON.stringify(
           options
         )}:`,
         error
@@ -226,24 +225,22 @@ export default class YoutubeSearch {
 
     return searchResults.map((result) => {
       const isrcResult: RegExpMatchArray | null = searchTerm.match(ISRC_REGEX);
-      const artists: string[] = [result.artist.name]; //result.artists.map((artist) => artist.name);
+      const artists: string[] = result.artists.map((artist) => artist.name);
 
       return {
         source: "YoutubeMusic",
         name: result.name,
-        url: `https://${
-          result.type === "SONG" ? "music" : "www"
-        }.youtube.com/watch?v=${result.videoId}`,
+        url: result.url,
         songId: result.videoId,
-        album: (result as SongDetailed).album?.name ?? "",
-        verified: result.type === "SONG",
+        album: result.album,
+        verified: result.verified,
         artist: result.artist.name,
         artists: artists,
         isrcSearch: isrcResult != null,
         searchQuery: searchTerm,
         explicit: null,
         duration: +result.duration!,
-        views: 0, //+result.views!,
+        views: +result.views!,
       };
     });
   }

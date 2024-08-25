@@ -56,6 +56,7 @@ export const YoutubeSearchResult = type({
   name: "string",
   url: "string",
   album: "string",
+  artist: "string",
   artists: ["string", "[]"],
   duration: "number",
   bestScore: "string | number | null",
@@ -84,4 +85,25 @@ export const AudioFormatsMetadata = type({
   success: "boolean",
   message: "string",
   formats: ["unknown", "[]"],
+});
+
+export type YoutubeSong = typeof YoutubeSong.infer;
+export const YoutubeSong = type({
+  name: "string",
+  videoId: "string",
+  artist: {
+    name: "string",
+  },
+  artists: [
+    {
+      name: "string",
+    },
+    "[]",
+  ],
+  url: "string",
+  album: "string",
+  duration: "number",
+  views: "number",
+  verified: "boolean",
+  thumbnail: "string",
 });

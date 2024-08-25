@@ -4,7 +4,6 @@ import SpotifyArtist from "../../models/spotify-artist";
 import SpotifyPlaylist from "../../models/spotify-playlist";
 import SpotifySong from "../../models/spotify-song";
 import YoutubeMusic from "../../providers/audio/ytmusic";
-import Formatter from "./formatter";
 
 export default class Parser {
   public static async searchSongs(
@@ -50,12 +49,10 @@ export default class Parser {
              * SpotifySong.fromSearchTerm(`${songFull.artist.name} - ${songFull.name}`)
              */
 
-            const image = Formatter.getMaxImageUrl(songResult.thumbnails)!;
-
             return SpotifySong.buildSearchResultMetadata({
               name: songResult.name,
               url: request,
-              image: image,
+              image: songResult.thumbnail,
               songId: songResult.videoId,
               album: songResult.name,
               artist: songResult.artist.name,
