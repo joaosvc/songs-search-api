@@ -54,7 +54,7 @@ export default class YoutubeSearch {
 
     // It is not necessary to process the url
     // Reason? what we are looking for is the youtube url
-    if (!song.url.includes("youtube.com/watch?v")) {
+    if (!YoutubeMusic.isValidUrl(song.url)) {
       let isrcResultsUrl: string[] = [];
 
       if (song.isrc) {
