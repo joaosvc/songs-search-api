@@ -1,7 +1,6 @@
-import YTMusicService from "../../services/ytmusic/ytmusic-service";
-import { SongDetailed, SongFull } from "../../services/ytmusic/@types/types";
 import { YoutubeSong } from "../../@types/types";
 import Formatter from "../../utils/search/formatter";
+import axios from "axios";
 
 export class YoutubeMusicError extends Error {
   constructor(message: string) {
@@ -11,16 +10,14 @@ export class YoutubeMusicError extends Error {
 }
 
 export default class YoutubeMusic {
-  public static instance: YTMusicService = {} as YTMusicService;
+  private static API_KEY = process.env.YOUTUBE_API_KEY;
+  private static BASE_URL = "https://www.googleapis.com/youtube/v3";
 
   public static async initialize() {
-    if (!(this.instance instanceof YTMusicService)) {
-      try {
-        this.instance = new YTMusicService();
-        await this.instance.initialize();
-      } catch (error: any) {
-        console.error("Error initializing YouTube", error.message);
-      }
+    this.API_KEY = process.env.YOUTUBE_API_KEY;
+
+    if (!this.API_KEY) {
+      throw new YoutubeMusicError("YouTube API key is not defined");
     }
   }
 
@@ -39,58 +36,80 @@ export default class YoutubeMusic {
   public static async searchSongs(searchTerm: string): Promise<YoutubeSong[]> {
     try {
       await this.initialize();
-      const searchResults = await this.instance.searchSongs(searchTerm);
 
-      return searchResults.map((result) => {
-        return this.buildResultFrom(result);
+      const response = await axios.get(`${this.BASE_URL}/search`, {
+        params: {
+          part: "snippet",
+          q: searchTerm,
+          key: this.API_KEY,
+          type: "video",
+          videoCategoryId: "10",
+        },
       });
+
+      const searchResults = response.data.items;
+      return searchResults.map((item: any) => this.buildResultFrom(item));
     } catch (error: any) {
       console.error("Error searching songs in YouTube", error.message);
       return [];
     }
   }
 
-  public static async searchVideos(searchTerm: string): Promise<YoutubeSong[]> {
-    return this.searchSongs(searchTerm);
-  }
-
   public static async getSong(videoId: string): Promise<YoutubeSong | null> {
     try {
       await this.initialize();
 
-      const searchResults = await this.instance.getSong(videoId);
+      const response = await axios.get(`${this.BASE_URL}/videos`, {
+        params: {
+          part: "snippet,contentDetails,statistics",
+          id: videoId,
+          key: this.API_KEY,
+        },
+      });
 
-      return this.buildResultFrom(searchResults);
+      const videoDetails = response.data.items[0];
+
+      if (!videoDetails) {
+        throw new YoutubeMusicError("Song not found");
+      }
+
+      return this.buildResultFrom(videoDetails);
     } catch (error: any) {
-      console.error("Error rettriving song YouTube:", error.message);
+      console.error("Error retrieving song from YouTube:", error.message);
       return null;
     }
   }
 
-  public static buildResultFrom(result: SongFull | SongDetailed): YoutubeSong {
-    const thumbnails = Formatter.getMaxImageUrl(result.thumbnails)!;
-    const url = `https://${
-      result.type === "SONG" ? "music" : "www"
-    }.youtube.com/watch?v=${result.videoId}`;
+  public static buildResultFrom(result: any): YoutubeSong {
+    const thumbnails = Formatter.getMaxImageUrl(result.snippet.thumbnails)!;
+    const url = `https://www.youtube.com/watch?v=${
+      result.id.videoId || result.id
+    }`;
 
     return {
-      name: result.name,
-      videoId: result.videoId,
+      name: result.snippet.title,
+      videoId: result.id.videoId || result.id,
       artist: {
-        name: result.artist.name,
+        name: result.snippet.channelTitle,
       },
       artists: [
         {
-          name: result.artist.name,
+          name: result.snippet.channelTitle,
         },
       ],
-      album: (result as any).album?.name ?? result.name,
-      duration: +result.duration!,
-      views: +(result as any).views,
+      album: result.snippet.title,
+      duration: YoutubeMusic.parseYouTubeDuration(
+        result.contentDetails?.duration || "PT0S"
+      ),
+      views: result.statistics ? +result.statistics.viewCount : 0,
       url: url,
       thumbnail: thumbnails,
-      verified: result.type === "SONG",
+      verified: true,
     };
+  }
+
+  public static async searchVideos(searchTerm: string): Promise<YoutubeSong[]> {
+    return this.searchSongs(searchTerm);
   }
 
   public static async getVideo(videoId: string): Promise<YoutubeSong | null> {
@@ -106,5 +125,19 @@ export default class YoutubeMusic {
 
   public static isValidUrl(url: string): boolean {
     return this.getWatchId(url) !== null;
+  }
+
+  public static parseYouTubeDuration(duration: string): number {
+    const match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
+
+    if (!match) {
+      return 0;
+    }
+
+    const hours = parseInt(match[1]?.replace("H", "") || "0");
+    const minutes = parseInt(match[2]?.replace("M", "") || "0");
+    const seconds = parseInt(match[3]?.replace("S", "") || "0");
+
+    return hours * 3600 + minutes * 60 + seconds;
   }
 }

@@ -195,22 +195,23 @@ export default class Formatter {
   }
 
   public static getMaxImageUrl(
-    images: { url: string; width: number; height: number }[]
+    images:
+      | { url: string; width: number; height: number }[]
+      | { [key: string]: { url: string; width: number; height: number } }
   ): string | null {
-    if (images.length === 0) {
+    const thumbnailArray = Array.isArray(images)
+      ? images
+      : Object.values(images);
+
+    if (thumbnailArray.length === 0) {
       return null;
     }
 
-    let maxAreaImage = images[0];
-    let maxArea = maxAreaImage.width * maxAreaImage.height;
-
-    for (let i = 1; i < images.length; i++) {
-      const area = images[i].width * images[i].height;
-      if (area > maxArea) {
-        maxArea = area;
-        maxAreaImage = images[i];
-      }
-    }
+    const maxAreaImage = thumbnailArray.reduce((maxImage, currentImage) => {
+      const currentArea = currentImage.width * currentImage.height;
+      const maxArea = maxImage.width * maxImage.height;
+      return currentArea > maxArea ? currentImage : maxImage;
+    });
 
     return maxAreaImage.url;
   }
